@@ -1,5 +1,5 @@
 class Magazine:
-    def __init__(self, name, category):
+    def __init__(self, name, category, id=None):
         # Validate name
         if not isinstance(name, str) or not (2 <= len(name) <= 16):
             raise ValueError("Name must be a string between 2 and 16 characters.")
@@ -10,17 +10,20 @@ class Magazine:
 
         self.name = name
         self.category = category
+        self.id = id
+
 
         # Insert into database
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute(
+        if self.id is None:
+           conn = get_db_connection()
+           cursor = conn.cursor()
+           cursor.execute(
             "INSERT INTO magazines (name, category) VALUES (?, ?)",
             (name, category),
-        )
-        conn.commit()
-        self.id = cursor.lastrowid  # Store the generated id
-        conn.close()
+           )
+           conn.commit()
+           self.id = cursor.lastrowid  # Store the generated id
+           conn.close()
 
     def __repr__(self):
         return f"<Magazine {self.name}>"

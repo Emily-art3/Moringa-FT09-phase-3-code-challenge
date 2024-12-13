@@ -56,7 +56,10 @@ def main():
     # Display results
     print("\nMagazines:")
     for magazine in magazines:
-        print(Magazine(id=magazine["id"], name=magazine["name"], category=magazine["category"]))
+
+         print(Magazine(name=magazine["name"], category=magazine["category"], id=magazine["id"]))
+         except ValueError as e:
+         print(f"Skipped invalid magazine data: {magazine}. Reason: {e}")
 
     print("\nAuthors:")
     for author in authors:
