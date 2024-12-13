@@ -31,3 +31,5 @@ def create_tables():
 
     conn.commit()
     conn.close()
+
+print("Database and tables have been successfully created.")
