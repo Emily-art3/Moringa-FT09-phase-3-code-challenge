@@ -5,7 +5,7 @@ from models.author import Author
 from models.magazine import Magazine
 
 def main():
-    # Initialize the database and create tables
+    # Initialize the database
     create_tables()
 
     # Collect user input
@@ -15,33 +15,32 @@ def main():
     article_title = input("Enter article title: ")
     article_content = input("Enter article content: ")
 
-    # Connect to the database
+    # Database connection
     conn = get_db_connection()
     cursor = conn.cursor()
 
-
-    '''
-        The following is just for testing purposes, 
-        you can modify it to meet the requirements of your implmentation.
-    '''
-
-    # Create an author
+    # Create author
     cursor.execute('INSERT INTO authors (name) VALUES (?)', (author_name,))
-    author_id = cursor.lastrowid # Use this to fetch the id of the newly created author
+    author_id = cursor.lastrowid
 
-    # Create a magazine
-    cursor.execute('INSERT INTO magazines (name, category) VALUES (?,?)', (magazine_name, magazine_category))
-    magazine_id = cursor.lastrowid # Use this to fetch the id of the newly created magazine
+    # Create magazine
+    cursor.execute('SELECT id FROM magazines WHERE name = ?', (magazine_name,))
+    result = cursor.fetchone()
+    if result:
+        magazine_id = result["id"]
+    else:
+        cursor.execute('INSERT INTO magazines (name, category) VALUES (?, ?)', (magazine_name, magazine_category))
+        magazine_id = cursor.lastrowid
 
-    # Create an article
-    cursor.execute('INSERT INTO articles (title, content, author_id, magazine_id) VALUES (?, ?, ?, ?)',
-                   (article_title, article_content, author_id, magazine_id))
+    # Create article
+    cursor.execute(
+        'INSERT INTO articles (title, content, author_id, magazine_id) VALUES (?, ?, ?, ?)',
+        (article_title, article_content, author_id, magazine_id)
+    )
 
     conn.commit()
 
-    # Query the database for inserted records. 
-    # The following fetch functionality should probably be in their respective models
-
+    # Fetch data for testing
     cursor.execute('SELECT * FROM magazines')
     magazines = cursor.fetchall()
 
@@ -53,21 +52,18 @@ def main():
 
     conn.close()
 
-    # Display results
+    # Display data
     print("\nMagazines:")
     for magazine in magazines:
-
-         print(Magazine(name=magazine["name"], category=magazine["category"], id=magazine["id"]))
-         except ValueError as e:
-         print(f"Skipped invalid magazine data: {magazine}. Reason: {e}")
+        print(Magazine(name=magazine["name"], category=magazine["category"], id=magazine["id"]))
 
     print("\nAuthors:")
     for author in authors:
-        print(Author(author["id"], author["name"]))
+        print(Author(name=author["name"], id=author["id"]))
 
     print("\nArticles:")
     for article in articles:
-        print(Article(article["id"], article["title"], article["content"], article["author_id"], article["magazine_id"]))
+        print(Article(title=article["title"], content=article["content"], author_id=article["author_id"], magazine_id=article["magazine_id"]))
 
 if __name__ == "__main__":
     main()

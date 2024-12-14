@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  moringaft09phase3codechallenge:
+    image: moringaft09phase3codechallenge
+    build:
+      context: .
+      dockerfile: ./Dockerfile

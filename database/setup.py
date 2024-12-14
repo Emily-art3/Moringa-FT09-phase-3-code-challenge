@@ -18,6 +18,10 @@ def create_tables():
         )
     ''')
     cursor.execute('''
+        CREATE UNIQUE INDEX IF NOT EXISTS unique_magazine_name ON magazines (name)
+    ''')
+
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS articles (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
